@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>btn_expand_list_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="mobile_phone" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="btn_expand_list_normal">
+            <g transform="translate(24.000000, 24.000000) rotate(-360.000000) translate(-24.000000, -24.000000) ">
+                <rect id="Rectangle-46-Copy-8" x="0" y="0" width="48" height="48" rx="24"></rect>
+                <path d="M13,21 L35,21 L35,20 L13,20 L13,21 Z M13,28 L35,28 L35,27 L13,27 L13,28 Z" id="Page-1" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>
