@@ -3,35 +3,18 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { onLogIn, onLogOut } from "../../../actions/authentication"
 import { onChangeState } from "../../../actions/state"
-import Footer from "../../presentational/Footer"
-import Header from "../../container/Header"
-import { HOME_STATE } from "../../../constants/state"
+import { LOGIN_STATE } from "../../../constants/state"
 
-class Home extends Component {
+class Login extends Component {
   componentDidMount() {
-    this.props.onChangeState(HOME_STATE)
-  }
-
-  getLoginState() {
-    return this.props.isLoading
-      ? "loading"
-      : this.props.isLoggedIn
-        ? "login"
-        : "logout"
+    this.props.onChangeState(LOGIN_STATE)
   }
 
   render() {
     return (
       <div>
-        <Header />
-        <p>mock</p>
-        <p>mock</p>
-        <p>mock</p>
-        <p>mock</p>
-        <p>login state: {this.getLoginState()}</p>
         <button onClick={this.props.onLogIn}>log in</button>
         <button onClick={this.props.onLogOut}>log out</button>
-        <Footer />
       </div>
     )
   }
@@ -48,4 +31,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Home)
+)(Login)
