@@ -3,7 +3,8 @@ import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { onLogIn } from "../../../actions/authentication"
-import { Button, Form } from "semantic-ui-react"
+import { Button, Form, Header } from "semantic-ui-react"
+import Main from "../Main"
 
 class Login extends Component {
   constructor() {
@@ -31,28 +32,33 @@ class Login extends Component {
 
   render() {
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <Form.Field inline>
-          <label>Email</label>
-          <input
-            placeholder="Email"
-            value={this.state.email}
-            onChange={this.handleChange.bind(this, "email")}
-          />
-        </Form.Field>
-        <Form.Field inline>
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this.handleChange.bind(this, "password")}
-          />
-        </Form.Field>
-        <Button type="submit" primary>
-          Submit
-        </Button>
-      </Form>
+      <Main>
+        <Header as="h1" size="huge" color="grey">
+          Login
+        </Header>
+        <Form size="huge" onSubmit={this.handleSubmit}>
+          <Form.Field inline>
+            <label>Email</label>
+            <input
+              placeholder="Email"
+              value={this.state.email}
+              onChange={this.handleChange.bind(this, "email")}
+            />
+          </Form.Field>
+          <Form.Field inline>
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Password"
+              value={this.state.password}
+              onChange={this.handleChange.bind(this, "password")}
+            />
+          </Form.Field>
+          <Button type="submit" primary>
+            Login
+          </Button>
+        </Form>
+      </Main>
     )
   }
 }
