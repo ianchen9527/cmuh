@@ -5,6 +5,7 @@ import registerServiceWorker from "./registerServiceWorker"
 import App from "./components/App"
 import "./index.css"
 import configureStore from "./configureStore"
+import "semantic-ui-css/semantic.min.css"
 
 async function init() {
   const store = await configureStore()

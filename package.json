@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^1.3.1",
     "axios": "^0.18.0",
     "firebase": "^5.1.0",
     "immutable": "^3.8.2",
@@ -20,6 +21,8 @@
     "redux-persist": "^5.10.0",
     "redux-persist-immutable": "^4.3.1",
     "redux-saga": "^0.16.0",
+    "semantic-ui-css": "^2.3.3",
+    "semantic-ui-react": "^0.82.0",
     "styled-components": "^3.3.0"
   },
   "scripts": {
@@ -27,6 +30,5 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "proxy": "http://yteam.thekono.com/KPI2"
+  }
 }

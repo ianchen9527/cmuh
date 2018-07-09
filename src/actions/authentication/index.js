@@ -1,8 +1,9 @@
 import { LOG_IN, LOG_OUT, LOG_IN_SUCCESS } from "../../constants/actionTypes"
 
-export const onLogIn = () => {
+export const onLogIn = (email, password) => {
   return {
-    type: LOG_IN
+    type: LOG_IN,
+    payload: { email: email, password: password }
   }
 }
 
