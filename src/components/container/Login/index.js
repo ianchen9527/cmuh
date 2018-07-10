@@ -18,7 +18,13 @@ class Login extends Component {
 
   componentDidMount() {
     if (this.props.isLoggedIn) {
-      this.props.history.push("/medical-records")
+      this.props.history.push("/home")
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isLoggedIn) {
+      this.props.history.push("/home")
     }
   }
 
@@ -34,11 +40,11 @@ class Login extends Component {
     return (
       <Main>
         <Header as="h1" size="huge" color="grey">
-          Login
+          登入
         </Header>
         <Form size="huge" onSubmit={this.handleSubmit}>
           <Form.Field inline>
-            <label>Email</label>
+            <label>帳號</label>
             <input
               placeholder="Email"
               value={this.state.email}
@@ -46,7 +52,7 @@ class Login extends Component {
             />
           </Form.Field>
           <Form.Field inline>
-            <label>Password</label>
+            <label>密碼</label>
             <input
               type="password"
               placeholder="Password"
@@ -55,7 +61,7 @@ class Login extends Component {
             />
           </Form.Field>
           <Button type="submit" primary>
-            Login
+            登入
           </Button>
         </Form>
       </Main>

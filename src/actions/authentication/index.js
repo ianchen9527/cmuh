@@ -1,4 +1,9 @@
-import { LOG_IN, LOG_OUT, LOG_IN_SUCCESS } from "../../constants/actionTypes"
+import {
+  LOG_IN,
+  LOG_OUT,
+  LOG_IN_SUCCESS,
+  LOG_OUT_SUCCESS
+} from "../../constants/actionTypes"
 
 export const onLogIn = (email, password) => {
   return {
@@ -13,4 +18,8 @@ export const onLogOut = () => ({
 
 export const onLogInSuccess = () => ({
   type: LOG_IN_SUCCESS
+})
+
+export const onLogOutSuccess = () => ({
+  type: LOG_OUT_SUCCESS
 })
