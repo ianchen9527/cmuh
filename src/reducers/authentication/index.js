@@ -37,7 +37,9 @@ const reducerMap = new Map([
   [
     LOG_IN_FAIL,
     (state, action) => {
-      return state.set("errorMessage", action.payload.message)
+      return state
+        .set("errorMessage", action.payload.message)
+        .set("isLoading", false)
     }
   ],
   [

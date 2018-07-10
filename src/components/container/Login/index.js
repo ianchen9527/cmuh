@@ -6,7 +6,7 @@ import {
   onLogIn,
   onClearAuthenticationError
 } from "../../../actions/authentication"
-import { Button, Form, Header } from "semantic-ui-react"
+import { Button, Form, Header, Loader, Dimmer } from "semantic-ui-react"
 import Main from "../Main"
 
 class Login extends Component {
@@ -43,6 +43,9 @@ class Login extends Component {
   render() {
     return (
       <Main>
+        <Dimmer active={this.props.isLoading}>
+          <Loader active />
+        </Dimmer>
         <Header as="h1" size="huge" color="grey">
           登入
         </Header>
@@ -78,6 +81,7 @@ class Login extends Component {
 
 const mapStateToProps = state => ({
   isLoggedIn: state.getIn(["authentication", "isLoggedIn"]),
+  isLoading: state.getIn(["authentication", "isLoading"]),
   errorMessage: state.getIn(["authentication", "errorMessage"])
 })
 
