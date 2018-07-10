@@ -3,7 +3,7 @@ import HeaderWrapper from "./components/HeaderWrapper"
 import MainLogo from "./components/MainLogo"
 import { Button } from "semantic-ui-react"
 import ButtonWrapper from "./components/ButtonWrapper"
-import { bindActionCreators } from "../../../../../../../.cache/typescript/2.8/node_modules/redux"
+import { bindActionCreators } from "redux"
 import { connect } from "react-redux"
 import { onLogOut } from "../../../actions/authentication"
 

@@ -2,7 +2,10 @@ import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { onLogIn } from "../../../actions/authentication"
+import {
+  onLogIn,
+  onClearAuthenticationError
+} from "../../../actions/authentication"
 import { Button, Form, Header } from "semantic-ui-react"
 import Main from "../Main"
 
@@ -17,6 +20,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
+    this.props.onClearAuthenticationError()
     if (this.props.isLoggedIn) {
       this.props.history.push("/home")
     }
@@ -60,6 +64,9 @@ class Login extends Component {
               onChange={this.handleChange.bind(this, "password")}
             />
           </Form.Field>
+          <Header size="medium" color="red">
+            {this.props.errorMessage}
+          </Header>
           <Button type="submit" primary>
             登入
           </Button>
@@ -70,10 +77,12 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => ({
-  isLoggedIn: state.get("authentication").get("isLoggedIn")
+  isLoggedIn: state.getIn(["authentication", "isLoggedIn"]),
+  errorMessage: state.getIn(["authentication", "errorMessage"])
 })
 
-const mapDispatchToProps = dispatch => bindActionCreators({ onLogIn }, dispatch)
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ onLogIn, onClearAuthenticationError }, dispatch)
 
 export default connect(
   mapStateToProps,

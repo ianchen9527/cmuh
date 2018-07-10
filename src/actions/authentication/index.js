@@ -2,7 +2,9 @@ import {
   LOG_IN,
   LOG_OUT,
   LOG_IN_SUCCESS,
-  LOG_OUT_SUCCESS
+  LOG_OUT_SUCCESS,
+  LOG_IN_FAIL,
+  CLEAR_AUTHENTICATION_ERROR
 } from "../../constants/actionTypes"
 
 export const onLogIn = (email, password) => {
@@ -26,7 +28,13 @@ export const onLogOutSuccess = () => ({
 
 export const onLogInFail = message => {
   return {
-    type: LOG_IN,
+    type: LOG_IN_FAIL,
     payload: { message: message }
+  }
+}
+
+export const onClearAuthenticationError = () => {
+  return {
+    type: CLEAR_AUTHENTICATION_ERROR
   }
 }
