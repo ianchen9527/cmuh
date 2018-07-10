@@ -28,13 +28,8 @@ class Home extends Component {
           Home
         </Header>
         <LinkWrapper>
-          <Link to="/create-medical-record">
-            <Button primary>新建病歷</Button>
-          </Link>
-        </LinkWrapper>
-        <LinkWrapper>
-          <Link to="/update-medical-record">
-            <Button primary>更新病歷</Button>
+          <Link to="/medical-records">
+            <Button primary>選取病歷</Button>
           </Link>
         </LinkWrapper>
       </Main>
