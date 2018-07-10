@@ -1,17 +1,20 @@
 import { put, takeEvery } from "redux-saga/effects"
-import { onLogInSuccess, onLogOutSuccess } from "../../actions/authentication"
+import {
+  onLogInSuccess,
+  onLogOutSuccess,
+  onLogInFail
+} from "../../actions/authentication"
 import { LOG_IN, LOG_OUT } from "../../constants/actionTypes"
 import firebase from "../../firebase"
 
 export function* login(action) {
   try {
-    const response = yield firebase
+    yield firebase
       .auth()
       .signInWithEmailAndPassword(action.payload.email, action.payload.password)
-
     yield put(onLogInSuccess())
   } catch (error) {
-    console.log(error)
+    yield put(onLogInFail(error.message))
   }
 }
 
@@ -21,7 +24,7 @@ export function* watchLogIn() {
 
 export function* logout() {
   try {
-    const response = yield firebase.auth().signOut()
+    yield firebase.auth().signOut()
     yield put(onLogOutSuccess())
   } catch (error) {
     console.log(error)

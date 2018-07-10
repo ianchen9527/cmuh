@@ -23,3 +23,10 @@ export const onLogInSuccess = () => ({
 export const onLogOutSuccess = () => ({
   type: LOG_OUT_SUCCESS
 })
+
+export const onLogInFail = message => {
+  return {
+    type: LOG_IN,
+    payload: { message: message }
+  }
+}
