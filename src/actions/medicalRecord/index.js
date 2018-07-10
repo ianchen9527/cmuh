@@ -1,26 +1,26 @@
 import {
-  CREATE_MEDICAL_RECORD,
-  CREATE_MEDICAL_RECORD_SUCCESS,
-  CREATE_MEDICAL_RECORD_FAIL
+  SAVE_MEDICAL_RECORD,
+  SAVE_MEDICAL_RECORD_SUCCESS,
+  SAVE_MEDICAL_RECORD_FAIL
 } from "../../constants/actionTypes"
 
-export const onCreateMedicalRecord = id => {
+export const onSaveMedicalRecord = id => {
   return {
-    type: CREATE_MEDICAL_RECORD,
+    type: SAVE_MEDICAL_RECORD,
     payload: { id: id }
   }
 }
 
-export const onCreateMedicalRecordSuccess = id => {
+export const onSaveMedicalRecordSuccess = id => {
   return {
-    type: CREATE_MEDICAL_RECORD_SUCCESS,
+    type: SAVE_MEDICAL_RECORD_SUCCESS,
     payload: { id: id }
   }
 }
 
-export const onCreateMedicalRecordFail = errorMessage => {
+export const onSaveMedicalRecordFail = errorMessage => {
   return {
-    type: CREATE_MEDICAL_RECORD_FAIL,
+    type: SAVE_MEDICAL_RECORD_FAIL,
     payload: { errorMessage: errorMessage }
   }
 }

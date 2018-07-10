@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom"
 import Login from "../container/Login"
 import Home from "../container/Home"
 import ChooseMedicalRecord from "../container/ChooseMedicalRecord"
+import EditMedicalRecord from "../container/EditMedicalRecord"
 
 class App extends Component {
   render() {
@@ -16,6 +17,10 @@ class App extends Component {
             exact
             path="/medical-records"
             component={ChooseMedicalRecord}
+          />
+          <Route
+            path="/medical-records/:medicalRecordId"
+            component={EditMedicalRecord}
           />
         </div>
       </Router>

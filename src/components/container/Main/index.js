@@ -6,7 +6,7 @@ import ContentWrapper from "./components/ContentWrapper"
 const Main = props => (
   <MainWrapper>
     <Header />
-    <ContentWrapper>{props.children}</ContentWrapper>
+    <ContentWrapper row={props.row ? 1 : 0}>{props.children}</ContentWrapper>
   </MainWrapper>
 )
 
