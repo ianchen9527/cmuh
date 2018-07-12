@@ -5,6 +5,7 @@ import { Step, Icon } from "semantic-ui-react"
 import Main from "../Main"
 import PatientInformation from "../PatientInformation"
 import StepsWrapper from "./components/StepsWrapper"
+import MedicineReaction from "../MedicineReaction"
 
 class EditMedicalRecord extends Component {
   constructor() {
@@ -52,6 +53,11 @@ class EditMedicalRecord extends Component {
           case 0:
             formComponent = (
               <PatientInformation medicalRecordId={medicalRecordId} />
+            )
+            break
+          case 1:
+            formComponent = (
+              <MedicineReaction medicalRecordId={medicalRecordId} />
             )
             break
           default:

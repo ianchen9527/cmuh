@@ -18,6 +18,10 @@ import {
 import FormWrapper from "./components/FormWrapper"
 import Label from "../../presentational/Label"
 import TextAreaWrapper from "./components/TextAreaWrapper"
+import DatePicker from "react-datepicker"
+import moment from "moment"
+import "react-datepicker/dist/react-datepicker.css"
+import DatePickerWrapper from "./components/DatePickerWrapper"
 
 class PatientInformation extends Component {
   constructor() {
@@ -25,6 +29,7 @@ class PatientInformation extends Component {
     this.state = {
       patientInformation: {
         name: "",
+        birthday: "",
         realId: "",
         gender: "",
         disease: "",
@@ -40,6 +45,7 @@ class PatientInformation extends Component {
       }
     }
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleBirthdayChange = this.handleBirthdayChange.bind(this)
   }
 
   componentDidMount() {
@@ -47,7 +53,7 @@ class PatientInformation extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.medicalRecord) {
+    if (nextProps.medicalRecord && nextProps.medicalRecord.patientInformation) {
       this.setState({
         patientInformation: nextProps.medicalRecord.patientInformation
       })
@@ -59,6 +65,12 @@ class PatientInformation extends Component {
     medicalRecord.id = this.props.medicalRecordId
     medicalRecord.patientInformation = this.state.patientInformation
     this.props.onSaveMedicalRecord(medicalRecord)
+  }
+
+  handleBirthdayChange(date) {
+    let patientInformation = { ...this.state.patientInformation }
+    patientInformation.birthday = date.format("YYYY/MM/DD")
+    this.setState({ patientInformation: patientInformation })
   }
 
   handleSelectChange(name, event, data) {
@@ -85,6 +97,12 @@ class PatientInformation extends Component {
       { key: true, text: "是", value: true },
       { key: false, text: "否", value: false }
     ]
+  }
+
+  get birthdayMoment() {
+    return this.state.patientInformation.birthday
+      ? moment(this.state.patientInformation.birthday, "YYYY/MM/DD")
+      : moment()
   }
 
   conditionRender(key, component) {
@@ -144,6 +162,15 @@ class PatientInformation extends Component {
               value={this.state.patientInformation.name}
               onChange={this.handleChange.bind(this, "name")}
             />
+          </Form.Field>
+          <Form.Field inline>
+            <Label>生日</Label>
+            <DatePickerWrapper>
+              <DatePicker
+                selected={this.birthdayMoment}
+                onChange={this.handleBirthdayChange}
+              />
+            </DatePickerWrapper>
           </Form.Field>
           <Form.Field inline>
             <Label>病歷號碼</Label>
