@@ -43,7 +43,7 @@ class Login extends Component {
   render() {
     return (
       <Main>
-        <Dimmer active={this.props.isLoading}>
+        <Dimmer active={this.props.isLoading} page>
           <Loader active />
         </Dimmer>
         <Header as="h1" size="huge" color="grey">

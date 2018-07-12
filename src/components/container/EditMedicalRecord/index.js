@@ -1,11 +1,10 @@
 import React, { Component } from "react"
 import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-import { onSaveMedicalRecord } from "../../../actions/medicalRecord"
-import { Step, Form, Header, Dimmer, Loader, Icon } from "semantic-ui-react"
+import { Step, Icon } from "semantic-ui-react"
 import Main from "../Main"
-import FormWrapper from "./components/FormWrapper"
+import PatientInformation from "../PatientInformation"
+import StepsWrapper from "./components/StepsWrapper"
 
 class EditMedicalRecord extends Component {
   constructor() {
@@ -21,7 +20,6 @@ class EditMedicalRecord extends Component {
         { header: "血球檢體操作紀錄", active: false, completed: false }
       ]
     }
-    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount() {
@@ -36,79 +34,62 @@ class EditMedicalRecord extends Component {
     }
   }
 
-  handleSubmit() {
-    console.log("submit")
+  changeStage(index, event) {
+    let stages = this.state.stages.map(stage => {
+      stage.active = false
+      return stage
+    })
+    stages[index].active = true
+    this.setState({ stages: stages })
   }
 
-  handleSelectChange = (name, event, data) => {
-    this.setState({ [name]: data.value })
-  }
-
-  handleChange = (name, event) => {
-    this.setState({ [name]: event.target.value })
-  }
-
-  renderSteps() {
-    return (
-      <Step.Group vertical>
-        {this.state.stages.map((stage, index) => (
-          <Step key={index} completed={stage.completed} active={stage.active}>
-            <Icon name="pencil alternate" />
-            <Step.Content>
-              <Step.Title>{stage.header}</Step.Title>
-            </Step.Content>
-          </Step>
-        ))}
-      </Step.Group>
-    )
+  renderForm() {
+    let formComponent = null
+    const medicalRecordId = this.props.match.params.medicalRecordId
+    this.state.stages.forEach((stage, index) => {
+      if (stage.active) {
+        switch (index) {
+          case 0:
+            formComponent = (
+              <PatientInformation medicalRecordId={medicalRecordId} />
+            )
+            break
+          default:
+            break
+        }
+      }
+    })
+    return formComponent
   }
 
   render() {
     return (
       <Main row={true}>
-        <Dimmer active={this.props.isLoading}>
-          <Loader active />
-        </Dimmer>
-        {this.renderSteps()}
-        <FormWrapper>
-          <Form size="large" onSubmit={this.handleSubmit}>
-            <Form.Field inline>
-              <label>帳號</label>
-              <input
-                placeholder="Email"
-                value={this.state.email}
-                onChange={this.handleChange.bind(this, "email")}
-              />
-            </Form.Field>
-            <Form.Field inline>
-              <label>密碼</label>
-              <input
-                type="password"
-                placeholder="Password"
-                value={this.state.password}
-                onChange={this.handleChange.bind(this, "password")}
-              />
-            </Form.Field>
-            <Header size="medium" color="red">
-              {this.props.errorMessage}
-            </Header>
-          </Form>
-        </FormWrapper>
+        <StepsWrapper>
+          <Step.Group vertical>
+            {this.state.stages.map((stage, index) => (
+              <Step
+                key={index}
+                completed={stage.completed}
+                active={stage.active}
+                onClick={this.changeStage.bind(this, index)}
+              >
+                <Icon name="pencil alternate" />
+                <Step.Content>
+                  <Step.Title>{stage.header}</Step.Title>
+                </Step.Content>
+              </Step>
+            ))}
+          </Step.Group>
+        </StepsWrapper>
+        {this.renderForm()}
       </Main>
     )
   }
 }
 
 const mapStateToProps = state => ({
-  isLoggedIn: state.getIn(["authentication", "isLoggedIn"]),
-  isLoading: state.getIn(["authentication", "isLoading"]),
-  errorMessage: state.getIn(["authentication", "errorMessage"])
+  isLoggedIn: state.getIn(["authentication", "isLoggedIn"])
 })
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ onSaveMedicalRecord }, dispatch)
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(EditMedicalRecord))
+export default connect(mapStateToProps)(withRouter(EditMedicalRecord))

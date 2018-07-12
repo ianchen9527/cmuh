@@ -13,7 +13,7 @@ const HeaderWrapper = styled.div`
   top: 0px;
   left: 0px;
   background-color: #fafafa;
-  z-index: 1;
+  z-index: 3;
 `
 
 export default HeaderWrapper
