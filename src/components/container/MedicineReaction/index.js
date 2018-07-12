@@ -162,21 +162,23 @@ class MedicineReaction extends Component {
       this.state.medicineReaction[dependencies[0]] &&
       this.state.medicineReaction[dependencies[1]]
     ) {
-      return ctcaeDb
-        .filter(row => {
-          return (
-            row[0] === this.state.medicineReaction[dependencies[0]] &&
-            row[1] === this.state.medicineReaction[dependencies[1]]
-          )
-        })[0]
-        .slice(2, 7)
-        .map((grade, index) => {
+      const matchRow = ctcaeDb.filter(row => {
+        return (
+          row[0] === this.state.medicineReaction[dependencies[0]] &&
+          row[1] === this.state.medicineReaction[dependencies[1]]
+        )
+      })[0]
+      if (matchRow) {
+        return matchRow.slice(2, 7).map((grade, index) => {
           return {
             key: grade,
             text: `${grade} (grade ${index + 1})`,
             value: grade
           }
         })
+      } else {
+        return []
+      }
     } else {
       return []
     }
