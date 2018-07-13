@@ -6,6 +6,7 @@ import Main from "../Main"
 import PatientInformation from "../PatientInformation"
 import StepsWrapper from "./components/StepsWrapper"
 import MedicineReaction from "../MedicineReaction"
+import BloodRecord from "../BloodRecord"
 
 class EditMedicalRecord extends Component {
   constructor() {
@@ -59,6 +60,9 @@ class EditMedicalRecord extends Component {
             formComponent = (
               <MedicineReaction medicalRecordId={medicalRecordId} />
             )
+            break
+          case 3:
+            formComponent = <BloodRecord medicalRecordId={medicalRecordId} />
             break
           default:
             break
