@@ -24,6 +24,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import DatePickerWrapper from "./components/DatePickerWrapper"
 import SelectWrapper from "./components/SelectWrapper"
 import ctcaeDb from "./assets/ctcae.json"
+import treatments from "./assets/treatments.json"
 
 class MedicineReaction extends Component {
   constructor() {
@@ -37,12 +38,16 @@ class MedicineReaction extends Component {
         crsCtcaeTerm: "",
         crsGrade: "",
         crsTreatment: "",
+        crsTreatmentMethod: "",
+        crsTreatmentMedicine: "",
         allergy: "",
         allergyMedicine: "",
         allergyMedDraSoc: "",
         allergyCtcaeTerm: "",
         allergyGrade: "",
         allergyTreatment: "",
+        allergyTreatmentMethod: "",
+        allergyTreatmentMedicine: "",
         allergyNonSingleMedicine: ""
       }
     }
@@ -171,7 +176,7 @@ class MedicineReaction extends Component {
       if (matchRow) {
         return matchRow.slice(2, 7).map((grade, index) => {
           return {
-            key: grade,
+            key: index,
             text: `${grade} (grade ${index + 1})`,
             value: grade
           }
@@ -179,6 +184,24 @@ class MedicineReaction extends Component {
       } else {
         return []
       }
+    } else {
+      return []
+    }
+  }
+
+  get treatmentOptions() {
+    return [
+      { key: "mechanical", text: "Mechanical support", value: "mechanical" },
+      { key: "medical", text: "Medical support", value: "medical" }
+    ]
+  }
+
+  getTreatmentMethodOptions(...dependencies) {
+    const treatmentName = this.state.medicineReaction[dependencies[0]]
+    if (treatmentName) {
+      return treatments[treatmentName].map(method => {
+        return { key: method, text: method, value: method }
+      })
     } else {
       return []
     }
@@ -200,37 +223,121 @@ class MedicineReaction extends Component {
     }
   }
 
+  renderGrade(label, key) {
+    const medDraSoc = `${key}MedDraSoc`
+    const ctcaeTerm = `${key}CtcaeTerm`
+    const grade = `${key}Grade`
+
+    return (
+      <Form.Field>
+        <Label>{label}</Label>
+        <SelectWrapper>
+          <Select
+            onChange={this.handleSelectChange.bind(this, medDraSoc)}
+            options={this.medDraOptions}
+            value={this.state.medicineReaction[medDraSoc]}
+            placeholder="MedDRA SOC"
+          />
+        </SelectWrapper>
+        <SelectWrapper>
+          <Select
+            onChange={this.handleSelectChange.bind(this, ctcaeTerm)}
+            options={this.getCtcaeTermOptions(medDraSoc)}
+            value={this.state.medicineReaction[ctcaeTerm]}
+            placeholder="CTCAE Term"
+          />
+        </SelectWrapper>
+        <SelectWrapper>
+          <Select
+            onChange={this.handleSelectChange.bind(this, grade)}
+            options={this.getGradeOptions(medDraSoc, ctcaeTerm)}
+            value={this.state.medicineReaction[grade]}
+            placeholder="grade"
+          />
+        </SelectWrapper>
+      </Form.Field>
+    )
+  }
+
   renderCrsGrade() {
     if (this.state.medicineReaction.crsFrequency !== "never") {
+      return this.renderGrade("近期發生之CRS症狀(Grade)", "crs")
+    }
+  }
+
+  renderTreatmentMedicine(dependency, key) {
+    const treatmentMedicine = `${key}TreatmentMedicine`
+    if (this.state.medicineReaction[dependency] === "medical") {
       return (
-        <Form.Field>
-          <Label>近期發生之CRS症狀(Grade)</Label>
-          <SelectWrapper>
-            <Select
-              onChange={this.handleSelectChange.bind(this, "crsMedDraSoc")}
-              options={this.medDraOptions}
-              value={this.state.medicineReaction.crsMedDraSoc}
-              placeholder="MedDRA SOC"
-            />
-          </SelectWrapper>
-          <SelectWrapper>
-            <Select
-              onChange={this.handleSelectChange.bind(this, "crsCtcaeTerm")}
-              options={this.getCtcaeTermOptions("crsMedDraSoc")}
-              value={this.state.medicineReaction.crsCtcaeTerm}
-              placeholder="CTCAE Term"
-            />
-          </SelectWrapper>
-          <SelectWrapper>
-            <Select
-              onChange={this.handleSelectChange.bind(this, "crsGrade")}
-              options={this.getGradeOptions("crsMedDraSoc", "crsCtcaeTerm")}
-              value={this.state.medicineReaction.crsGrade}
-              placeholder="grade"
-            />
-          </SelectWrapper>
+        <SelectWrapper>
+          <input
+            placeholder="drug..."
+            value={this.state.medicineReaction[treatmentMedicine]}
+            onChange={this.handleChange.bind(this, treatmentMedicine)}
+          />
+        </SelectWrapper>
+      )
+    }
+  }
+
+  renderTreatment(label, key) {
+    const treatment = `${key}Treatment`
+    const treatmentMethod = `${key}TreatmentMethod`
+
+    return (
+      <Form.Field>
+        <Label>{label}</Label>
+        <SelectWrapper>
+          <Select
+            onChange={this.handleSelectChange.bind(this, treatment)}
+            options={this.treatmentOptions}
+            value={this.state.medicineReaction[treatment]}
+            placeholder="mechanical, medical"
+          />
+        </SelectWrapper>
+        <SelectWrapper>
+          <Select
+            onChange={this.handleSelectChange.bind(this, treatmentMethod)}
+            options={this.getTreatmentMethodOptions(treatment)}
+            value={this.state.medicineReaction[treatmentMethod]}
+            placeholder="Treatment method..."
+          />
+        </SelectWrapper>
+        {this.renderTreatmentMedicine(treatment, key)}
+      </Form.Field>
+    )
+  }
+
+  renderCrsTreatment() {
+    if (this.state.medicineReaction.crsFrequency !== "never") {
+      return this.renderTreatment("處理方式", "crs")
+    }
+  }
+
+  renderAllergyMedicine() {
+    if (this.state.medicineReaction.allergy) {
+      return (
+        <Form.Field inline>
+          <Label>單株抗體藥物名稱</Label>
+          <input
+            placeholder="單株抗體藥物名稱"
+            value={this.state.medicineReaction.allergyMedicine}
+            onChange={this.handleChange.bind(this, "allergyMedicine")}
+          />
         </Form.Field>
       )
+    }
+  }
+
+  renderAllergyGrade() {
+    if (this.state.medicineReaction.allergy) {
+      return this.renderGrade("症狀", "allergy")
+    }
+  }
+
+  renderAllergyTreatment() {
+    if (this.state.medicineReaction.allergy) {
+      return this.renderTreatment("處理方式", "allergy")
     }
   }
 
@@ -265,6 +372,19 @@ class MedicineReaction extends Component {
           </Form.Field>
           {this.renderCrsFrequency()}
           {this.renderCrsGrade()}
+          {this.renderCrsTreatment()}
+          <Form.Field inline>
+            <Label>受試者曾對單株抗體藥物生過敏</Label>
+            <Select
+              onChange={this.handleSelectChange.bind(this, "allergy")}
+              options={this.boolOptions}
+              value={this.state.medicineReaction.allergy}
+              placeholder="是, 否"
+            />
+          </Form.Field>
+          {this.renderAllergyMedicine()}
+          {this.renderAllergyGrade()}
+          {this.renderAllergyTreatment()}
           <Form.Field inline>
             <Label large>受試者對何種藥物過敏(非單株抗體藥物)</Label>
             <TextAreaWrapper>
