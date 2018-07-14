@@ -35,7 +35,7 @@ class PremedicationRecord extends Component {
       analgesicsDose: "",
       premedicationRecord: {
         bodyTemperature: "",
-        heartReate: "",
+        heartRate: "",
         systolicBloodPressure: "",
         diastolicBloodPressure: "",
         bloodOxygenation: "",
@@ -246,7 +246,7 @@ class PremedicationRecord extends Component {
             <Label>心跳</Label>
             <input
               placeholder="心跳"
-              value={this.state.premedicationRecord.heartReate}
+              value={this.state.premedicationRecord.heartRate}
               onChange={this.handleChange.bind(this, "heartRate")}
             />
           </Form.Field>
