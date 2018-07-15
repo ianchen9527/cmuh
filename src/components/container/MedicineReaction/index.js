@@ -13,7 +13,9 @@ import {
   Loader,
   Select,
   TextArea,
-  Button
+  Button,
+  Icon,
+  List
 } from "semantic-ui-react"
 import FormWrapper from "./components/FormWrapper"
 import Label from "../../presentational/Label"
@@ -23,6 +25,7 @@ import moment from "moment"
 import "react-datepicker/dist/react-datepicker.css"
 import DatePickerWrapper from "./components/DatePickerWrapper"
 import SelectWrapper from "./components/SelectWrapper"
+import InputWrapper from "./components/InputWrapper"
 import ctcaeDb from "./assets/ctcae.json"
 import treatments from "./assets/treatments.json"
 
@@ -30,6 +33,12 @@ class MedicineReaction extends Component {
   constructor() {
     super()
     this.state = {
+      crsTreatmentCategory: "",
+      crsTreatmentMethod: "",
+      crsTreatmentMedicine: "",
+      allergyTreatmentCategory: "",
+      allergyTreatmentMethod: "",
+      allergyTreatmentMedicine: "",
       medicineReaction: {
         isFirstTime: "",
         date: moment().format("YYYY/MM/DD"),
@@ -37,17 +46,13 @@ class MedicineReaction extends Component {
         crsMedDraSoc: "",
         crsCtcaeTerm: "",
         crsGrade: "",
-        crsTreatment: "",
-        crsTreatmentMethod: "",
-        crsTreatmentMedicine: "",
+        crsTreatments: [],
         allergy: "",
         allergyMedicine: "",
         allergyMedDraSoc: "",
         allergyCtcaeTerm: "",
         allergyGrade: "",
-        allergyTreatment: "",
-        allergyTreatmentMethod: "",
-        allergyTreatmentMedicine: "",
+        allergyTreatments: [],
         allergyNonSingleMedicine: ""
       }
     }
@@ -86,10 +91,18 @@ class MedicineReaction extends Component {
     this.setState({ medicineReaction: medicineReaction })
   }
 
+  handleTreatmentSelectChange(name, event, data) {
+    this.setState({ [name]: data.value })
+  }
+
   handleChange(name, event) {
     let medicineReaction = { ...this.state.medicineReaction }
     medicineReaction[name] = event.target.value
     this.setState({ medicineReaction: medicineReaction })
+  }
+
+  handleTreatmentChange(name, event) {
+    this.setState({ [name]: event.target.value })
   }
 
   get boolOptions() {
@@ -197,7 +210,7 @@ class MedicineReaction extends Component {
   }
 
   getTreatmentMethodOptions(...dependencies) {
-    const treatmentName = this.state.medicineReaction[dependencies[0]]
+    const treatmentName = this.state[dependencies[0]]
     if (treatmentName) {
       return treatments[treatmentName].map(method => {
         return { key: method, text: method, value: method }
@@ -267,21 +280,75 @@ class MedicineReaction extends Component {
 
   renderTreatmentMedicine(dependency, key) {
     const treatmentMedicine = `${key}TreatmentMedicine`
-    if (this.state.medicineReaction[dependency] === "medical") {
+    if (this.state[dependency] === "medical") {
       return (
         <SelectWrapper>
           <input
             placeholder="drug..."
-            value={this.state.medicineReaction[treatmentMedicine]}
-            onChange={this.handleChange.bind(this, treatmentMedicine)}
+            value={this.state[treatmentMedicine]}
+            onChange={this.handleTreatmentChange.bind(this, treatmentMedicine)}
           />
         </SelectWrapper>
       )
     }
   }
 
+  addTreatment(key) {
+    const treatments = `${key}Treatments`
+    const treatmentCategory = `${key}TreatmentCategory`
+    const treatmentMethod = `${key}TreatmentMethod`
+    const treatmentMedicine = `${key}TreatmentMedicine`
+
+    if (
+      this.state[treatmentCategory] === "mechanical" &&
+      this.state[treatmentMethod]
+    ) {
+      let medicineReaction = { ...this.state.medicineReaction }
+      let medicineReactionTreatments = medicineReaction[treatments] || []
+      medicineReactionTreatments.push({
+        category: this.state[treatmentCategory],
+        method: this.state[treatmentMethod]
+      })
+      medicineReaction[treatments] = medicineReactionTreatments
+      this.setState({
+        medicineReaction: medicineReaction,
+        [treatmentCategory]: "",
+        [treatmentMethod]: "",
+        [treatmentMedicine]: ""
+      })
+    } else if (
+      this.state[treatmentCategory] === "medical" &&
+      this.state[treatmentMethod]
+    ) {
+      if (this.state[treatmentMedicine]) {
+        let medicineReaction = { ...this.state.medicineReaction }
+        let medicineReactionTreatments = medicineReaction[treatments] || []
+        medicineReactionTreatments.push({
+          category: this.state[treatmentCategory],
+          method: this.state[treatmentMethod],
+          medicine: this.state[treatmentMedicine]
+        })
+        medicineReaction[treatments] = medicineReactionTreatments
+        this.setState({
+          medicineReaction: medicineReaction,
+          [treatmentCategory]: "",
+          [treatmentMethod]: "",
+          [treatmentMedicine]: ""
+        })
+      }
+    }
+  }
+
+  removeTreatment(key, index) {
+    let medicineReaction = { ...this.state.medicineReaction }
+    medicineReaction[`${key}Treatments`].splice(index, 1)
+    this.setState({
+      medicineReaction: medicineReaction
+    })
+  }
+
   renderTreatment(label, key) {
-    const treatment = `${key}Treatment`
+    const treatmentCategory = `${key}TreatmentCategory`
     const treatmentMethod = `${key}TreatmentMethod`
 
     return (
@@ -289,29 +356,79 @@ class MedicineReaction extends Component {
         <Label>{label}</Label>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, treatment)}
+            onChange={this.handleTreatmentSelectChange.bind(
+              this,
+              treatmentCategory
+            )}
             options={this.treatmentOptions}
-            value={this.state.medicineReaction[treatment]}
+            value={this.state[treatmentCategory]}
             placeholder="mechanical, medical"
           />
         </SelectWrapper>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, treatmentMethod)}
-            options={this.getTreatmentMethodOptions(treatment)}
-            value={this.state.medicineReaction[treatmentMethod]}
+            onChange={this.handleTreatmentSelectChange.bind(
+              this,
+              treatmentMethod
+            )}
+            options={this.getTreatmentMethodOptions(treatmentCategory)}
+            value={this.state[treatmentMethod]}
             placeholder="Treatment method..."
           />
         </SelectWrapper>
-        {this.renderTreatmentMedicine(treatment, key)}
+        {this.renderTreatmentMedicine(treatmentCategory, key)}
+        <SelectWrapper>
+          <Button
+            type="button"
+            icon
+            primary
+            onClick={this.addTreatment.bind(this, key)}
+          >
+            <Icon name="add" />
+          </Button>
+        </SelectWrapper>
       </Form.Field>
     )
+  }
+
+  renderTreatments(key) {
+    const treatments = `${key}Treatments`
+    if (this.state.medicineReaction[treatments]) {
+      return (
+        <List size="big">
+          {this.state.medicineReaction[treatments].map((treament, index) => {
+            return (
+              <List.Item key={index}>
+                <List.Content>
+                  <InputWrapper>
+                    <Button
+                      type="button"
+                      icon
+                      color="red"
+                      onClick={this.removeTreatment.bind(this, key, index)}
+                    >
+                      <Icon name="trash alternate outline" />
+                    </Button>
+                  </InputWrapper>
+                  [{treament.category}] {treament.method}{" "}
+                  {treament.medicine ? ` - ${treament.medicine}` : ""}
+                </List.Content>
+              </List.Item>
+            )
+          })}
+        </List>
+      )
+    }
   }
 
   renderCrsTreatment() {
     if (this.state.medicineReaction.crsFrequency !== "never") {
       return this.renderTreatment("處理方式", "crs")
     }
+  }
+
+  renderCrsTreatments() {
+    return this.renderTreatments("crs")
   }
 
   renderAllergyMedicine() {
@@ -339,6 +456,10 @@ class MedicineReaction extends Component {
     if (this.state.medicineReaction.allergy) {
       return this.renderTreatment("處理方式", "allergy")
     }
+  }
+
+  renderAllergyTreatments() {
+    return this.renderTreatments("allergy")
   }
 
   render() {
@@ -373,6 +494,7 @@ class MedicineReaction extends Component {
           {this.renderCrsFrequency()}
           {this.renderCrsGrade()}
           {this.renderCrsTreatment()}
+          {this.renderCrsTreatments()}
           <Form.Field inline>
             <Label>受試者曾對單株抗體藥物生過敏</Label>
             <Select
@@ -385,6 +507,7 @@ class MedicineReaction extends Component {
           {this.renderAllergyMedicine()}
           {this.renderAllergyGrade()}
           {this.renderAllergyTreatment()}
+          {this.renderAllergyTreatments()}
           <Form.Field inline>
             <Label large>受試者對何種藥物過敏(非單株抗體藥物)</Label>
             <TextAreaWrapper>
