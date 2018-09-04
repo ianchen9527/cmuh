@@ -39,19 +39,21 @@ class MedicineReaction extends Component {
       allergyTreatmentCategory: "",
       allergyTreatmentMethod: "",
       allergyTreatmentMedicine: "",
+      crsMedDraSoc: "",
+      crsCtcaeTerm: "",
+      crsGrade: "",
+      allergyMedDraSoc: "",
+      allergyCtcaeTerm: "",
+      allergyGrade: "",
       medicineReaction: {
         isFirstTime: "",
         date: moment().format("YYYY/MM/DD"),
         crsFrequency: "",
-        crsMedDraSoc: "",
-        crsCtcaeTerm: "",
-        crsGrade: "",
+        crsGrades: [],
         crsTreatments: [],
         allergy: "",
         allergyMedicine: "",
-        allergyMedDraSoc: "",
-        allergyCtcaeTerm: "",
-        allergyGrade: "",
+        allergyGrades: [],
         allergyTreatments: [],
         allergyNonSingleMedicine: ""
       }
@@ -159,10 +161,10 @@ class MedicineReaction extends Component {
   }
 
   getCtcaeTermOptions(dependency) {
-    if (this.state.medicineReaction[dependency]) {
+    if (this.state[dependency]) {
       return ctcaeDb
         .filter(row => {
-          return row[0] === this.state.medicineReaction[dependency]
+          return row[0] === this.state[dependency]
         })
         .map(row => {
           return { key: row[1], text: row[1], value: row[1] }
@@ -176,14 +178,11 @@ class MedicineReaction extends Component {
   }
 
   getGradeOptions(...dependencies) {
-    if (
-      this.state.medicineReaction[dependencies[0]] &&
-      this.state.medicineReaction[dependencies[1]]
-    ) {
+    if (this.state[dependencies[0]] && this.state[dependencies[1]]) {
       const matchRow = ctcaeDb.filter(row => {
         return (
-          row[0] === this.state.medicineReaction[dependencies[0]] &&
-          row[1] === this.state.medicineReaction[dependencies[1]]
+          row[0] === this.state[dependencies[0]] &&
+          row[1] === this.state[dependencies[1]]
         )
       })[0]
       if (matchRow) {
@@ -224,7 +223,10 @@ class MedicineReaction extends Component {
     if (!this.state.medicineReaction.isFirstTime) {
       return (
         <Form.Field inline>
-          <Label>受試者多次施打{this.medicineName}, 產生 CRS 之頻率</Label>
+          <Label>
+            受試者多次施打
+            {this.medicineName}, 產生 CRS 之頻率
+          </Label>
           <Select
             onChange={this.handleSelectChange.bind(this, "crsFrequency")}
             options={this.frequencyOptions}
@@ -246,36 +248,111 @@ class MedicineReaction extends Component {
         <Label>{label}</Label>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, medDraSoc)}
+            onChange={this.handleTreatmentSelectChange.bind(this, medDraSoc)}
             options={this.medDraOptions}
-            value={this.state.medicineReaction[medDraSoc]}
+            value={this.state[medDraSoc]}
             placeholder="MedDRA SOC"
           />
         </SelectWrapper>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, ctcaeTerm)}
+            onChange={this.handleTreatmentSelectChange.bind(this, ctcaeTerm)}
             options={this.getCtcaeTermOptions(medDraSoc)}
-            value={this.state.medicineReaction[ctcaeTerm]}
+            value={this.state[ctcaeTerm]}
             placeholder="CTCAE Term"
           />
         </SelectWrapper>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, grade)}
+            onChange={this.handleTreatmentSelectChange.bind(this, grade)}
             options={this.getGradeOptions(medDraSoc, ctcaeTerm)}
-            value={this.state.medicineReaction[grade]}
+            value={this.state[grade]}
             placeholder="grade"
           />
         </SelectWrapper>
+        <SelectWrapper>
+          <Button
+            type="button"
+            icon
+            primary
+            onClick={this.addGrade.bind(this, key)}
+          >
+            <Icon name="add" />
+          </Button>
+        </SelectWrapper>
       </Form.Field>
     )
+  }
+
+  addGrade(key) {
+    const grades = `${key}Grades`
+    const medDraSoc = `${key}MedDraSoc`
+    const ctcaeTerm = `${key}CtcaeTerm`
+    const grade = `${key}Grade`
+
+    if (this.state[medDraSoc] && this.state[ctcaeTerm] && this.state[grade]) {
+      let medicineReaction = { ...this.state.medicineReaction }
+      let medicineReactionGrades = medicineReaction[grades] || []
+      medicineReactionGrades.push({
+        medDraSoc: this.state[medDraSoc],
+        ctcaeTerm: this.state[ctcaeTerm],
+        grade: this.state[grade]
+      })
+      medicineReaction[grades] = medicineReactionGrades
+      this.setState({
+        medicineReaction: medicineReaction,
+        [medDraSoc]: "",
+        [ctcaeTerm]: "",
+        [grade]: ""
+      })
+    }
   }
 
   renderCrsGrade() {
     if (this.state.medicineReaction.crsFrequency !== "never") {
       return this.renderGrade("近期發生之CRS症狀(Grade)", "crs")
     }
+  }
+
+  renderCrsGrades() {
+    return this.renderGrades("crs")
+  }
+
+  renderGrades(key) {
+    const grades = `${key}Grades`
+    if (this.state.medicineReaction[grades]) {
+      return (
+        <List size="big">
+          {this.state.medicineReaction[grades].map((grade, index) => {
+            return (
+              <List.Item key={index}>
+                <List.Content>
+                  <InputWrapper>
+                    <Button
+                      type="button"
+                      icon
+                      color="red"
+                      onClick={this.removeGrade.bind(this, key, index)}
+                    >
+                      <Icon name="trash alternate outline" />
+                    </Button>
+                  </InputWrapper>
+                  [{grade.medDraSoc}] [{grade.ctcaeTerm}] [{grade.grade}]
+                </List.Content>
+              </List.Item>
+            )
+          })}
+        </List>
+      )
+    }
+  }
+
+  removeGrade(key, index) {
+    let medicineReaction = { ...this.state.medicineReaction }
+    medicineReaction[`${key}Grades`].splice(index, 1)
+    this.setState({
+      medicineReaction: medicineReaction
+    })
   }
 
   renderTreatmentMedicine(dependency, key) {
@@ -474,7 +551,11 @@ class MedicineReaction extends Component {
             <p>{this.props.medicalRecordId}</p>
           </Form.Field>
           <Form.Field inline>
-            <Label>施打{this.medicineName}日期</Label>
+            <Label>
+              施打
+              {this.medicineName}
+              日期
+            </Label>
             <DatePickerWrapper>
               <DatePicker
                 selected={this.dateMoment}
@@ -483,7 +564,10 @@ class MedicineReaction extends Component {
             </DatePickerWrapper>
           </Form.Field>
           <Form.Field inline>
-            <Label>受試者為初次施打{this.medicineName}</Label>
+            <Label>
+              受試者為初次施打
+              {this.medicineName}
+            </Label>
             <Select
               onChange={this.handleSelectChange.bind(this, "isFirstTime")}
               options={this.boolOptions}
@@ -493,6 +577,7 @@ class MedicineReaction extends Component {
           </Form.Field>
           {this.renderCrsFrequency()}
           {this.renderCrsGrade()}
+          {this.renderCrsGrades()}
           {this.renderCrsTreatment()}
           {this.renderCrsTreatments()}
           <Form.Field inline>
