@@ -318,6 +318,10 @@ class MedicineReaction extends Component {
     return this.renderGrades("crs")
   }
 
+  renderAllergyGrades() {
+    return this.renderGrades("allergy")
+  }
+
   renderGrades(key) {
     const grades = `${key}Grades`
     if (this.state.medicineReaction[grades]) {
@@ -591,6 +595,7 @@ class MedicineReaction extends Component {
           </Form.Field>
           {this.renderAllergyMedicine()}
           {this.renderAllergyGrade()}
+          {this.renderAllergyGrades()}
           {this.renderAllergyTreatment()}
           {this.renderAllergyTreatments()}
           <Form.Field inline>

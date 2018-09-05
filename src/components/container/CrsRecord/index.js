@@ -35,12 +35,13 @@ class CrsRecord extends Component {
       treatmentCategory: "",
       treatmentMethod: "",
       treatmentMedicine: "",
+      medDraSoc: "",
+      ctcaeTerm: "",
+      grade: "",
       crsRecord: {
         gradeLevel: "",
         time: moment().format("HH:mm"),
-        medDraSoc: "",
-        ctcaeTerm: "",
-        grade: "",
+        grades: [],
         treatments: []
       }
     }
@@ -113,10 +114,10 @@ class CrsRecord extends Component {
   }
 
   get ctcaeTermOptions() {
-    if (this.state.crsRecord.medDraSoc) {
+    if (this.state.medDraSoc) {
       return ctcaeDb
         .filter(row => {
-          return row[0] === this.state.crsRecord.medDraSoc
+          return row[0] === this.state.medDraSoc
         })
         .map(row => {
           return { key: row[1], text: row[1], value: row[1] }
@@ -140,11 +141,10 @@ class CrsRecord extends Component {
   }
 
   get gradeOptions() {
-    if (this.state.crsRecord.medDraSoc && this.state.crsRecord.ctcaeTerm) {
+    if (this.state.medDraSoc && this.state.ctcaeTerm) {
       const matchRow = ctcaeDb.filter(row => {
         return (
-          row[0] === this.state.crsRecord.medDraSoc &&
-          row[1] === this.state.crsRecord.ctcaeTerm
+          row[0] === this.state.medDraSoc && row[1] === this.state.ctcaeTerm
         )
       })[0]
       if (matchRow) {
@@ -187,30 +187,96 @@ class CrsRecord extends Component {
         <Label>受試者自述症狀</Label>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, "medDraSoc")}
+            onChange={this.handleTreatmentSelectChange.bind(this, "medDraSoc")}
             options={this.medDraOptions}
-            value={this.state.crsRecord.medDraSoc}
+            value={this.state.medDraSoc}
             placeholder="MedDRA SOC"
           />
         </SelectWrapper>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, "ctcaeTerm")}
+            onChange={this.handleTreatmentSelectChange.bind(this, "ctcaeTerm")}
             options={this.ctcaeTermOptions}
-            value={this.state.crsRecord.ctcaeTerm}
+            value={this.state.ctcaeTerm}
             placeholder="CTCAE Term"
           />
         </SelectWrapper>
         <SelectWrapper>
           <Select
-            onChange={this.handleSelectChange.bind(this, "grade")}
+            onChange={this.handleTreatmentSelectChange.bind(this, "grade")}
             options={this.gradeOptions}
-            value={this.state.crsRecord.grade}
+            value={this.state.grade}
             placeholder="grade"
           />
         </SelectWrapper>
+        <SelectWrapper>
+          <Button type="button" icon primary onClick={this.addGrade.bind(this)}>
+            <Icon name="add" />
+          </Button>
+        </SelectWrapper>
       </Form.Field>
     )
+  }
+
+  addGrade() {
+    const grades = `grades`
+    const medDraSoc = `medDraSoc`
+    const ctcaeTerm = `ctcaeTerm`
+    const grade = `grade`
+
+    if (this.state[medDraSoc] && this.state[ctcaeTerm] && this.state[grade]) {
+      let crsRecord = { ...this.state.crsRecord }
+      let crsRecordGrades = crsRecord[grades] || []
+      crsRecordGrades.push({
+        medDraSoc: this.state[medDraSoc],
+        ctcaeTerm: this.state[ctcaeTerm],
+        grade: this.state[grade]
+      })
+      crsRecord[grades] = crsRecordGrades
+      this.setState({
+        crsRecord: crsRecord,
+        [medDraSoc]: "",
+        [ctcaeTerm]: "",
+        [grade]: ""
+      })
+    }
+  }
+
+  renderGrades(key) {
+    const grades = `grades`
+    if (this.state.crsRecord[grades]) {
+      return (
+        <List size="big">
+          {this.state.crsRecord[grades].map((grade, index) => {
+            return (
+              <List.Item key={index}>
+                <List.Content>
+                  <InputWrapper>
+                    <Button
+                      type="button"
+                      icon
+                      color="red"
+                      onClick={this.removeGrade.bind(this, index)}
+                    >
+                      <Icon name="trash alternate outline" />
+                    </Button>
+                  </InputWrapper>
+                  [{grade.medDraSoc}] [{grade.ctcaeTerm}] [{grade.grade}]
+                </List.Content>
+              </List.Item>
+            )
+          })}
+        </List>
+      )
+    }
+  }
+
+  removeGrade(index) {
+    let crsRecord = { ...this.state.crsRecord }
+    crsRecord[`grades`].splice(index, 1)
+    this.setState({
+      crsRecord: crsRecord
+    })
   }
 
   renderTreatmentMedicine() {
@@ -381,6 +447,7 @@ class CrsRecord extends Component {
             </DatePickerWrapper>
           </Form.Field>
           {this.renderGrade()}
+          {this.renderGrades()}
           {this.renderTreatment()}
           {this.renderTreatments()}
           <Header size="medium" color="red">
