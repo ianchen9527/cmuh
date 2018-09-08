@@ -23,7 +23,8 @@ class EditMedicalRecord extends Component {
         { header: "抽血與施打藥物紀錄", active: false, completed: false },
         { header: "CRS紀錄（詳細紀錄）", active: false, completed: false },
         { header: "血清檢體操作紀錄", active: false, completed: false },
-        { header: "血球檢體操作紀錄", active: false, completed: false }
+        { header: "血球檢體操作紀錄", active: false, completed: false },
+        { header: "返回", active: false, completed: false }
       ]
     }
   }
@@ -41,12 +42,16 @@ class EditMedicalRecord extends Component {
   }
 
   changeStage(index, event) {
-    let stages = this.state.stages.map(stage => {
-      stage.active = false
-      return stage
-    })
-    stages[index].active = true
-    this.setState({ stages: stages })
+    if (index === 7) {
+      window.location = "/medical-records"
+    } else {
+      let stages = this.state.stages.map(stage => {
+        stage.active = false
+        return stage
+      })
+      stages[index].active = true
+      this.setState({ stages: stages })
+    }
   }
 
   renderForm() {
