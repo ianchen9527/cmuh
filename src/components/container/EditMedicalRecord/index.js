@@ -10,6 +10,7 @@ import BloodRecord from "../BloodRecord"
 import PremedicationRecord from "../PremedicationRecord"
 import CrsRecord from "../CrsRecord"
 import SerumRecord from "../SerumRecord"
+import BloodCellRecord from "../BloodCellRecord"
 
 class EditMedicalRecord extends Component {
   constructor() {
@@ -77,6 +78,11 @@ class EditMedicalRecord extends Component {
             break
           case 5:
             formComponent = <SerumRecord medicalRecordId={medicalRecordId} />
+            break
+          case 6:
+            formComponent = (
+              <BloodCellRecord medicalRecordId={medicalRecordId} />
+            )
             break
           default:
             break
