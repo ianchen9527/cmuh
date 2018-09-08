@@ -22,6 +22,8 @@ import "rc-time-picker/assets/index.css"
 import moment from "moment"
 import DatePickerWrapper from "./components/DatePickerWrapper"
 import FormSelectWrapper from "./components/FormSelectWrapper"
+import InputWrapper from "./components/InputWrapper"
+import TextWrapper from "./components/TextWrapper"
 
 class SerumRecord extends Component {
   constructor() {
@@ -36,7 +38,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           },
           {
             id: "#0",
@@ -44,7 +46,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           },
           {
             id: "#1",
@@ -52,7 +54,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           },
           {
             id: "#2",
@@ -60,7 +62,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           },
           {
             id: "#3",
@@ -68,7 +70,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           },
           {
             id: "#4",
@@ -76,7 +78,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           },
           {
             id: "#CRS",
@@ -84,7 +86,7 @@ class SerumRecord extends Component {
             hemolysis: "",
             volume: "",
             tube: "",
-            location: ""
+            location: ["", "", ""]
           }
         ]
       }
@@ -131,10 +133,25 @@ class SerumRecord extends Component {
     this.setState({ serumRecord: serumRecord })
   }
 
+  handleLocationChange(index, order, event) {
+    let serumRecord = { ...this.state.serumRecord }
+    serumRecord.records[index]["location"][order] = event.target.value
+    this.setState({ serumRecord: serumRecord })
+  }
+
   get statusOptions() {
     return [
-      { key: "continue", text: "持續", value: "continue" },
-      { key: "discontinue", text: "中斷", value: "discontinue" }
+      { key: "yes", text: "Yes", value: true },
+      { key: "no", text: "No", value: false }
+    ]
+  }
+
+  get tubeOptions() {
+    return [
+      { key: 1, text: "1", value: 1 },
+      { key: 2, text: "2", value: 2 },
+      { key: 3, text: "3", value: 3 },
+      { key: 4, text: "4", value: 4 }
     ]
   }
 
@@ -147,7 +164,6 @@ class SerumRecord extends Component {
       return (
         <Table.Row key={index}>
           <Table.Cell>{record.id}</Table.Cell>
-          <Table.Cell>{this.getRecordPeriod(record)}</Table.Cell>
           <Table.Cell>
             <FormSelectWrapper>
               <Select
@@ -155,23 +171,78 @@ class SerumRecord extends Component {
                 onChange={this.handleRecordSelectChange.bind(
                   this,
                   index,
-                  "status"
+                  "coagulation"
                 )}
                 options={this.statusOptions}
-                value={this.state.bloodRecord.records[index].status}
+                value={this.state.serumRecord.records[index].coagulation}
+              />
+            </FormSelectWrapper>
+          </Table.Cell>
+          <Table.Cell>
+            <FormSelectWrapper>
+              <Select
+                fluid
+                onChange={this.handleRecordSelectChange.bind(
+                  this,
+                  index,
+                  "hemolysis"
+                )}
+                options={this.statusOptions}
+                value={this.state.serumRecord.records[index].hemolysis}
               />
             </FormSelectWrapper>
           </Table.Cell>
           <Table.Cell>
             <FormSelectWrapper>
               <input
-                value={this.state.bloodRecord.records[index].speed}
-                onChange={this.handleRecordChange.bind(this, index, "speed")}
+                style={{ width: "90px" }}
+                value={this.state.serumRecord.records[index].volume}
+                onChange={this.handleRecordChange.bind(this, index, "volume")}
               />
             </FormSelectWrapper>
           </Table.Cell>
-          {this.renderRecordGrade(index, 0)}
-          {this.renderRecordGrade(index, 1)}
+          <Table.Cell>
+            <FormSelectWrapper>
+              <Select
+                fluid
+                onChange={this.handleRecordSelectChange.bind(
+                  this,
+                  index,
+                  "tube"
+                )}
+                options={this.tubeOptions}
+                value={this.state.serumRecord.records[index].tube}
+              />
+            </FormSelectWrapper>
+          </Table.Cell>
+          <Table.Cell>
+            <FormSelectWrapper>
+              <TextWrapper>Box-</TextWrapper>
+              <InputWrapper>
+                <input
+                  style={{ width: "90px" }}
+                  value={this.state.serumRecord.records[index].location[0]}
+                  onChange={this.handleLocationChange.bind(this, index, 0)}
+                />
+              </InputWrapper>
+              <TextWrapper>-</TextWrapper>
+              <InputWrapper>
+                <input
+                  style={{ width: "90px" }}
+                  value={this.state.serumRecord.records[index].location[1]}
+                  onChange={this.handleLocationChange.bind(this, index, 1)}
+                />
+              </InputWrapper>
+              <TextWrapper>-</TextWrapper>
+              <InputWrapper>
+                <input
+                  style={{ width: "90px" }}
+                  value={this.state.serumRecord.records[index].location[2]}
+                  onChange={this.handleLocationChange.bind(this, index, 2)}
+                />
+              </InputWrapper>
+            </FormSelectWrapper>
+          </Table.Cell>
         </Table.Row>
       )
     })
@@ -182,14 +253,12 @@ class SerumRecord extends Component {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>採血管編號</Table.HeaderCell>
-            <Table.HeaderCell>區間</Table.HeaderCell>
-            <Table.HeaderCell>狀態</Table.HeaderCell>
-            <Table.HeaderCell>輸注速度(滴/時)</Table.HeaderCell>
-            <Table.HeaderCell>CRS(Grade 1)發生時間與生理紀錄</Table.HeaderCell>
-            <Table.HeaderCell>
-              CRS(Grade >= 2)發生時間與生理紀錄
-            </Table.HeaderCell>
+            <Table.HeaderCell>標號</Table.HeaderCell>
+            <Table.HeaderCell>凝血</Table.HeaderCell>
+            <Table.HeaderCell>溶血</Table.HeaderCell>
+            <Table.HeaderCell>分裝體積(ml)</Table.HeaderCell>
+            <Table.HeaderCell>管數</Table.HeaderCell>
+            <Table.HeaderCell>存放地點</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -212,24 +281,13 @@ class SerumRecord extends Component {
             <p>{this.props.medicalRecordId}</p>
           </Form.Field>
           <Form.Field inline>
-            <Label>開始打藥</Label>
+            <Label>處理時間</Label>
             <DatePickerWrapper>
               <TimePicker
                 format="HH:mm"
                 showSecond={false}
                 onChange={this.handleTimeChange.bind(this, "beginAt")}
-                value={this.getMoment(this.state.bloodRecord.beginAt)}
-              />
-            </DatePickerWrapper>
-          </Form.Field>
-          <Form.Field inline>
-            <Label>完成打藥</Label>
-            <DatePickerWrapper>
-              <TimePicker
-                format="HH:mm"
-                showSecond={false}
-                onChange={this.handleTimeChange.bind(this, "endAt")}
-                value={this.getMoment(this.state.bloodRecord.endAt)}
+                value={this.getMoment(this.state.serumRecord.beginAt)}
               />
             </DatePickerWrapper>
           </Form.Field>

@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 const FormSelectWrapper = styled.div`
-  width: 120px;
+  display: flex;
 `
 
 export default FormSelectWrapper
