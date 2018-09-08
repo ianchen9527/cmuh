@@ -109,7 +109,7 @@ class EditMedicalRecord extends Component {
                 active={stage.active}
                 onClick={this.changeStage.bind(this, index)}
               >
-                <Icon name="pencil alternate" />
+                <Icon name={index < 7 ? "pencil alternate" : "reply"} />
                 <Step.Content>
                   <Step.Title>{stage.header}</Step.Title>
                 </Step.Content>
