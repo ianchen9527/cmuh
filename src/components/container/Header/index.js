@@ -13,7 +13,7 @@ class Header extends Component {
       <HeaderWrapper>
         <MainLogo />
         <ButtonWrapper hide={this.props.isLoggedIn ? 1 : 0}>
-          <Button onClick={this.props.onLogOut}>登出</Button>
+          <Button onClick={this.props.onLogOut}>登出s</Button>
         </ButtonWrapper>
       </HeaderWrapper>
     )
