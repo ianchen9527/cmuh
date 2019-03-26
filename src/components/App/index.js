@@ -4,6 +4,7 @@ import Login from "../container/Login"
 import Home from "../container/Home"
 import ChooseMedicalRecord from "../container/ChooseMedicalRecord"
 import EditMedicalRecord from "../container/EditMedicalRecord"
+import CreateMedicine from "../container/CreateMedicine"
 
 class App extends Component {
   render() {
@@ -21,6 +22,10 @@ class App extends Component {
           <Route
             path="/medical-records/:medicalRecordId"
             component={EditMedicalRecord}
+          />
+          <Route
+            path="/create-medicine"
+            component={CreateMedicine}
           />
         </div>
       </Router>

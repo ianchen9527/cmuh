@@ -1,11 +1,11 @@
-import React, { Component } from "react"
-import { withRouter } from "react-router-dom"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import {
   onSaveMedicalRecord,
   onFetchMedicalRecord
-} from "../../../actions/medicalRecord"
+} from "../../../actions/medicalRecord";
 import {
   Form,
   Header,
@@ -16,22 +16,23 @@ import {
   Button,
   Icon,
   List
-} from "semantic-ui-react"
-import FormWrapper from "./components/FormWrapper"
-import Label from "../../presentational/Label"
-import TextAreaWrapper from "./components/TextAreaWrapper"
-import DatePicker from "react-datepicker"
-import moment from "moment"
-import "react-datepicker/dist/react-datepicker.css"
-import DatePickerWrapper from "./components/DatePickerWrapper"
-import SelectWrapper from "./components/SelectWrapper"
-import InputWrapper from "./components/InputWrapper"
-import ctcaeDb from "./assets/ctcae.json"
-import treatments from "./assets/treatments.json"
+} from "semantic-ui-react";
+import FormWrapper from "./components/FormWrapper";
+import Label from "../../presentational/Label";
+import TextAreaWrapper from "./components/TextAreaWrapper";
+import DatePicker from "react-datepicker";
+import moment from "moment";
+import "react-datepicker/dist/react-datepicker.css";
+import DatePickerWrapper from "./components/DatePickerWrapper";
+import SelectWrapper from "./components/SelectWrapper";
+import InputWrapper from "./components/InputWrapper";
+import ctcaeDb from "./assets/ctcae.json";
+import treatments from "./assets/treatments.json";
+import { onFetchMedicines } from "../../../actions/medicine";
 
 class MedicineReaction extends Component {
   constructor() {
-    super()
+    super();
     this.state = {
       crsTreatmentCategory: "",
       crsTreatmentMethod: "",
@@ -57,61 +58,61 @@ class MedicineReaction extends Component {
         allergyTreatments: [],
         allergyNonSingleMedicine: ""
       }
-    }
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleDateChange = this.handleDateChange.bind(this)
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
   }
 
   componentDidMount() {
-    this.props.onFetchMedicalRecord(this.props.medicalRecordId)
+    this.props.onFetchMedicalRecord(this.props.medicalRecordId);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.medicalRecord && nextProps.medicalRecord.medicineReaction) {
       this.setState({
         medicineReaction: nextProps.medicalRecord.medicineReaction
-      })
+      });
     }
   }
 
   handleSubmit() {
-    let medicalRecord = this.props.medicalRecord || {}
-    medicalRecord.id = this.props.medicalRecordId
-    medicalRecord.medicineReaction = this.state.medicineReaction
-    this.props.onSaveMedicalRecord(medicalRecord)
+    let medicalRecord = this.props.medicalRecord || {};
+    medicalRecord.id = this.props.medicalRecordId;
+    medicalRecord.medicineReaction = this.state.medicineReaction;
+    this.props.onSaveMedicalRecord(medicalRecord);
   }
 
   handleDateChange(date) {
-    let medicineReaction = { ...this.state.medicineReaction }
-    medicineReaction.date = date.format("YYYY/MM/DD")
-    this.setState({ medicineReaction: medicineReaction })
+    let medicineReaction = { ...this.state.medicineReaction };
+    medicineReaction.date = date.format("YYYY/MM/DD");
+    this.setState({ medicineReaction: medicineReaction });
   }
 
   handleSelectChange(name, event, data) {
-    let medicineReaction = { ...this.state.medicineReaction }
-    medicineReaction[name] = data.value
-    this.setState({ medicineReaction: medicineReaction })
+    let medicineReaction = { ...this.state.medicineReaction };
+    medicineReaction[name] = data.value;
+    this.setState({ medicineReaction: medicineReaction });
   }
 
   handleTreatmentSelectChange(name, event, data) {
-    this.setState({ [name]: data.value })
+    this.setState({ [name]: data.value });
   }
 
   handleChange(name, event) {
-    let medicineReaction = { ...this.state.medicineReaction }
-    medicineReaction[name] = event.target.value
-    this.setState({ medicineReaction: medicineReaction })
+    let medicineReaction = { ...this.state.medicineReaction };
+    medicineReaction[name] = event.target.value;
+    this.setState({ medicineReaction: medicineReaction });
   }
 
   handleTreatmentChange(name, event) {
-    this.setState({ [name]: event.target.value })
+    this.setState({ [name]: event.target.value });
   }
 
   get boolOptions() {
     return [
       { key: true, text: "是", value: true },
       { key: false, text: "否", value: false }
-    ]
+    ];
   }
 
   get frequencyOptions() {
@@ -119,61 +120,52 @@ class MedicineReaction extends Component {
       { key: "always", text: "每次皆發生", value: "always" },
       { key: "occasionally", text: "偶爾發生", value: "occasionally" },
       { key: "never", text: "從未發生", value: "never" }
-    ]
+    ];
   }
 
   get medicineName() {
-    let medicineName = ""
-    switch (this.props.medicalRecordId.split("-")[1]) {
-      case "R":
-        medicineName = "Rituximab"
-        break
-      case "H":
-        medicineName = "Herceptin"
-        break
-      case "C":
-        medicineName = "Cetuximab"
-        break
-      default:
-        medicineName = "Rituximab"
-        break
+    let medicineName = "";
+    if (this.props.medicines) {
+      medicineName = this.props.medicines[
+        this.props.medicalRecordId.split("-")[1]
+      ];
     }
-    return medicineName
+    return medicineName;
   }
 
   get dateMoment() {
     return this.state.medicineReaction.date
       ? moment(this.state.medicineReaction.date, "YYYY/MM/DD")
-      : moment()
+      : moment();
   }
 
   get medDraOptions() {
     return ctcaeDb
       .map(row => {
-        return row[0]
+        return row[0];
       })
       .filter((v, i, a) => {
-        return a.indexOf(v) === i
+        return a.indexOf(v) === i;
       })
       .map(medDraSoc => {
-        return { key: medDraSoc, text: medDraSoc, value: medDraSoc }
-      })
+        return { key: medDraSoc, text: medDraSoc, value: medDraSoc };
+      });
   }
 
   getCtcaeTermOptions(dependency) {
     if (this.state[dependency]) {
       return ctcaeDb
         .filter(row => {
-          return row[0] === this.state[dependency]
+          return row[0] === this.state[dependency];
         })
         .map(row => {
-          return { key: row[1], text: row[1], value: row[1] }
+          return { key: row[1], text: row[1], value: row[1] };
         })
         .filter((v, i, a) => {
-          return a.indexOf(v) === i
-        })
+          return a.indexOf(v) === i;
+        });
     } else {
-      return []
+      return [];
     }
   }
 
@@ -183,21 +175,21 @@ class MedicineReaction extends Component {
         return (
           row[0] === this.state[dependencies[0]] &&
           row[1] === this.state[dependencies[1]]
-        )
-      })[0]
+        );
+      })[0];
       if (matchRow) {
         return matchRow.slice(2, 7).map((grade, index) => {
           return {
             key: index,
             text: `${grade} (grade ${index + 1})`,
             value: grade
-          }
-        })
+          };
+        });
       } else {
-        return []
+        return [];
       }
     } else {
-      return []
+      return [];
     }
   }
 
@@ -205,17 +197,17 @@ class MedicineReaction extends Component {
     return [
       { key: "mechanical", text: "Mechanical support", value: "mechanical" },
       { key: "medical", text: "Medical support", value: "medical" }
-    ]
+    ];
   }
 
   getTreatmentMethodOptions(...dependencies) {
-    const treatmentName = this.state[dependencies[0]]
+    const treatmentName = this.state[dependencies[0]];
     if (treatmentName) {
       return treatments[treatmentName].map(method => {
-        return { key: method, text: method, value: method }
-      })
+        return { key: method, text: method, value: method };
+      });
     } else {
-      return []
+      return [];
     }
   }
 
@@ -234,14 +226,14 @@ class MedicineReaction extends Component {
             placeholder="每次皆發生，偶爾發生，從未發生"
           />
         </Form.Field>
-      )
+      );
     }
   }
 
   renderGrade(label, key) {
-    const medDraSoc = `${key}MedDraSoc`
-    const ctcaeTerm = `${key}CtcaeTerm`
-    const grade = `${key}Grade`
+    const medDraSoc = `${key}MedDraSoc`;
+    const ctcaeTerm = `${key}CtcaeTerm`;
+    const grade = `${key}Grade`;
 
     return (
       <Form.Field>
@@ -281,49 +273,49 @@ class MedicineReaction extends Component {
           </Button>
         </SelectWrapper>
       </Form.Field>
-    )
+    );
   }
 
   addGrade(key) {
-    const grades = `${key}Grades`
-    const medDraSoc = `${key}MedDraSoc`
-    const ctcaeTerm = `${key}CtcaeTerm`
-    const grade = `${key}Grade`
+    const grades = `${key}Grades`;
+    const medDraSoc = `${key}MedDraSoc`;
+    const ctcaeTerm = `${key}CtcaeTerm`;
+    const grade = `${key}Grade`;
 
     if (this.state[medDraSoc] && this.state[ctcaeTerm] && this.state[grade]) {
-      let medicineReaction = { ...this.state.medicineReaction }
-      let medicineReactionGrades = medicineReaction[grades] || []
+      let medicineReaction = { ...this.state.medicineReaction };
+      let medicineReactionGrades = medicineReaction[grades] || [];
       medicineReactionGrades.push({
         medDraSoc: this.state[medDraSoc],
         ctcaeTerm: this.state[ctcaeTerm],
         grade: this.state[grade]
-      })
-      medicineReaction[grades] = medicineReactionGrades
+      });
+      medicineReaction[grades] = medicineReactionGrades;
       this.setState({
         medicineReaction: medicineReaction,
         [medDraSoc]: "",
         [ctcaeTerm]: "",
         [grade]: ""
-      })
+      });
     }
   }
 
   renderCrsGrade() {
     if (this.state.medicineReaction.crsFrequency !== "never") {
-      return this.renderGrade("近期發生之CRS症狀(Grade)", "crs")
+      return this.renderGrade("近期發生之CRS症狀(Grade)", "crs");
     }
   }
 
   renderCrsGrades() {
-    return this.renderGrades("crs")
+    return this.renderGrades("crs");
   }
 
   renderAllergyGrades() {
-    return this.renderGrades("allergy")
+    return this.renderGrades("allergy");
   }
 
   renderGrades(key) {
-    const grades = `${key}Grades`
+    const grades = `${key}Grades`;
     if (this.state.medicineReaction[grades]) {
       return (
         <List size="big">
@@ -344,23 +336,23 @@ class MedicineReaction extends Component {
                   [{grade.medDraSoc}] [{grade.ctcaeTerm}] [{grade.grade}]
                 </List.Content>
               </List.Item>
-            )
+            );
           })}
         </List>
-      )
+      );
     }
   }
 
   removeGrade(key, index) {
-    let medicineReaction = { ...this.state.medicineReaction }
-    medicineReaction[`${key}Grades`].splice(index, 1)
+    let medicineReaction = { ...this.state.medicineReaction };
+    medicineReaction[`${key}Grades`].splice(index, 1);
     this.setState({
       medicineReaction: medicineReaction
-    })
+    });
   }
 
   renderTreatmentMedicine(dependency, key) {
-    const treatmentMedicine = `${key}TreatmentMedicine`
+    const treatmentMedicine = `${key}TreatmentMedicine`;
     if (this.state[dependency] === "medical") {
       return (
         <SelectWrapper>
@@ -370,67 +362,67 @@ class MedicineReaction extends Component {
             onChange={this.handleTreatmentChange.bind(this, treatmentMedicine)}
           />
         </SelectWrapper>
-      )
+      );
     }
   }
 
   addTreatment(key) {
-    const treatments = `${key}Treatments`
-    const treatmentCategory = `${key}TreatmentCategory`
-    const treatmentMethod = `${key}TreatmentMethod`
-    const treatmentMedicine = `${key}TreatmentMedicine`
+    const treatments = `${key}Treatments`;
+    const treatmentCategory = `${key}TreatmentCategory`;
+    const treatmentMethod = `${key}TreatmentMethod`;
+    const treatmentMedicine = `${key}TreatmentMedicine`;
 
     if (
       this.state[treatmentCategory] === "mechanical" &&
       this.state[treatmentMethod]
     ) {
-      let medicineReaction = { ...this.state.medicineReaction }
-      let medicineReactionTreatments = medicineReaction[treatments] || []
+      let medicineReaction = { ...this.state.medicineReaction };
+      let medicineReactionTreatments = medicineReaction[treatments] || [];
       medicineReactionTreatments.push({
         category: this.state[treatmentCategory],
         method: this.state[treatmentMethod]
-      })
-      medicineReaction[treatments] = medicineReactionTreatments
+      });
+      medicineReaction[treatments] = medicineReactionTreatments;
       this.setState({
         medicineReaction: medicineReaction,
         [treatmentCategory]: "",
         [treatmentMethod]: "",
         [treatmentMedicine]: ""
-      })
+      });
     } else if (
       this.state[treatmentCategory] === "medical" &&
       this.state[treatmentMethod]
     ) {
       if (this.state[treatmentMedicine]) {
-        let medicineReaction = { ...this.state.medicineReaction }
-        let medicineReactionTreatments = medicineReaction[treatments] || []
+        let medicineReaction = { ...this.state.medicineReaction };
+        let medicineReactionTreatments = medicineReaction[treatments] || [];
         medicineReactionTreatments.push({
           category: this.state[treatmentCategory],
           method: this.state[treatmentMethod],
           medicine: this.state[treatmentMedicine]
-        })
-        medicineReaction[treatments] = medicineReactionTreatments
+        });
+        medicineReaction[treatments] = medicineReactionTreatments;
         this.setState({
           medicineReaction: medicineReaction,
           [treatmentCategory]: "",
           [treatmentMethod]: "",
           [treatmentMedicine]: ""
-        })
+        });
       }
     }
   }
 
   removeTreatment(key, index) {
-    let medicineReaction = { ...this.state.medicineReaction }
-    medicineReaction[`${key}Treatments`].splice(index, 1)
+    let medicineReaction = { ...this.state.medicineReaction };
+    medicineReaction[`${key}Treatments`].splice(index, 1);
     this.setState({
       medicineReaction: medicineReaction
-    })
+    });
   }
 
   renderTreatment(label, key) {
-    const treatmentCategory = `${key}TreatmentCategory`
-    const treatmentMethod = `${key}TreatmentMethod`
+    const treatmentCategory = `${key}TreatmentCategory`;
+    const treatmentMethod = `${key}TreatmentMethod`;
 
     return (
       <Form.Field>
@@ -469,11 +461,11 @@ class MedicineReaction extends Component {
           </Button>
         </SelectWrapper>
       </Form.Field>
-    )
+    );
   }
 
   renderTreatments(key) {
-    const treatments = `${key}Treatments`
+    const treatments = `${key}Treatments`;
     if (this.state.medicineReaction[treatments]) {
       return (
         <List size="big">
@@ -495,21 +487,21 @@ class MedicineReaction extends Component {
                   {treament.medicine ? ` - ${treament.medicine}` : ""}
                 </List.Content>
               </List.Item>
-            )
+            );
           })}
         </List>
-      )
+      );
     }
   }
 
   renderCrsTreatment() {
     if (this.state.medicineReaction.crsFrequency !== "never") {
-      return this.renderTreatment("處理方式", "crs")
+      return this.renderTreatment("處理方式", "crs");
     }
   }
 
   renderCrsTreatments() {
-    return this.renderTreatments("crs")
+    return this.renderTreatments("crs");
   }
 
   renderAllergyMedicine() {
@@ -523,24 +515,24 @@ class MedicineReaction extends Component {
             onChange={this.handleChange.bind(this, "allergyMedicine")}
           />
         </Form.Field>
-      )
+      );
     }
   }
 
   renderAllergyGrade() {
     if (this.state.medicineReaction.allergy) {
-      return this.renderGrade("症狀", "allergy")
+      return this.renderGrade("症狀", "allergy");
     }
   }
 
   renderAllergyTreatment() {
     if (this.state.medicineReaction.allergy) {
-      return this.renderTreatment("處理方式", "allergy")
+      return this.renderTreatment("處理方式", "allergy");
     }
   }
 
   renderAllergyTreatments() {
-    return this.renderTreatments("allergy")
+    return this.renderTreatments("allergy");
   }
 
   render() {
@@ -619,20 +611,24 @@ class MedicineReaction extends Component {
           </Button>
         </Form>
       </FormWrapper>
-    )
+    );
   }
 }
 
 const mapStateToProps = state => ({
   isLoading: state.getIn(["medicalRecord", "isLoading"]),
   medicalRecord: state.getIn(["medicalRecord", "body"]),
-  errorMessage: state.getIn(["medicalRecord", "errorMessage"])
-})
+  errorMessage: state.getIn(["medicalRecord", "errorMessage"]),
+  medicines: state.getIn(["medicines", "body"])
+});
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ onSaveMedicalRecord, onFetchMedicalRecord }, dispatch)
+  bindActionCreators(
+    { onSaveMedicalRecord, onFetchMedicalRecord, onFetchMedicines },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(MedicineReaction))
+)(withRouter(MedicineReaction));

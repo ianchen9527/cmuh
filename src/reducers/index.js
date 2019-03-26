@@ -1,12 +1,14 @@
 import { combineReducers } from "redux-immutable"
 import authentication from "./authentication"
 import medicalRecord from "./medicalRecord"
+import medicines from "./medicines"
 import { LOG_OUT } from "../constants/actionTypes"
 import storage from "redux-persist/es/storage"
 
 const appReducer = combineReducers({
   authentication,
-  medicalRecord
+  medicalRecord,
+  medicines,
 })
 
 export default (state, action) => {

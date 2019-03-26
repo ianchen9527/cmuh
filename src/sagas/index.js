@@ -4,12 +4,16 @@ import {
   watchSaveMedicalRecord,
   watchFetchMedicalRecord
 } from "./medicalRecordSaga"
+import { watchSaveMedicine, watchFetchMedicines } from "./medicinesSaga";
+
 
 export default function* rootSaga() {
   yield all([
     watchLogIn(),
     watchLogOut(),
     watchSaveMedicalRecord(),
-    watchFetchMedicalRecord()
+    watchFetchMedicalRecord(),
+    watchSaveMedicine(),
+    watchFetchMedicines(),
   ])
 }
