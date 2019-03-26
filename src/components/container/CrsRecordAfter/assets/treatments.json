@@ -1,0 +1,14 @@
+{
+  "mechanical": [
+    "Discontinue the drug",
+    "Oxygen support(nasal cannula oxygen, high-flow oxygen, CPAP, or BiPAP)",
+    "Increase intravenous fluids",
+    "Blood product support (fresh frozen plasma, cryoprecipitate or fibrinogen concentrate)"
+  ],
+  "medical": [
+    "low-/high-dose vasopressors",
+    "antihistamines",
+    "NSAIDs",
+    "Narcotics"
+  ]
+}

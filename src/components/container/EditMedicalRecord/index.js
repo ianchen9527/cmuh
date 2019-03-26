@@ -9,6 +9,7 @@ import MedicineReaction from "../MedicineReaction"
 import BloodRecord from "../BloodRecord"
 import PremedicationRecord from "../PremedicationRecord"
 import CrsRecord from "../CrsRecord"
+import CrsRecordAfter from "../CrsRecordAfter"
 import SerumRecord from "../SerumRecord"
 import BloodCellRecord from "../BloodCellRecord"
 
@@ -21,7 +22,8 @@ class EditMedicalRecord extends Component {
         { header: "藥物反應", active: false, completed: false },
         { header: "打藥物前相關紀錄", active: false, completed: false },
         { header: "抽血與施打藥物紀錄", active: false, completed: false },
-        { header: "CRS紀錄（詳細紀錄）", active: false, completed: false },
+        { header: "CRS紀錄（打藥當天）", active: false, completed: false },
+        { header: "CRS紀錄（打藥之後）", active: false, completed: false },
         { header: "血清檢體操作紀錄", active: false, completed: false },
         { header: "血球檢體操作紀錄", active: false, completed: false },
         { header: "返回", active: false, completed: false }
@@ -42,7 +44,7 @@ class EditMedicalRecord extends Component {
   }
 
   changeStage(index, event) {
-    if (index === 7) {
+    if (index === 8) {
       window.location = "/medical-records"
     } else {
       let stages = this.state.stages.map(stage => {
@@ -82,9 +84,12 @@ class EditMedicalRecord extends Component {
             formComponent = <CrsRecord medicalRecordId={medicalRecordId} />
             break
           case 5:
-            formComponent = <SerumRecord medicalRecordId={medicalRecordId} />
+            formComponent = <CrsRecordAfter medicalRecordId={medicalRecordId} />
             break
           case 6:
+            formComponent = <SerumRecord medicalRecordId={medicalRecordId} />
+            break
+          case 7:
             formComponent = (
               <BloodCellRecord medicalRecordId={medicalRecordId} />
             )
@@ -109,7 +114,7 @@ class EditMedicalRecord extends Component {
                 active={stage.active}
                 onClick={this.changeStage.bind(this, index)}
               >
-                <Icon name={index < 7 ? "pencil alternate" : "reply"} />
+                <Icon name={index < 8 ? "pencil alternate" : "reply"} />
                 <Step.Content>
                   <Step.Title>{stage.header}</Step.Title>
                 </Step.Content>
